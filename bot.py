@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ─── Config ──────────────────────────────────────────────────────────────────
+# Config
 TOKEN = os.getenv("DISCORD_TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
 DONATE_CHANNEL_ID = os.getenv("DONATE_CHANNEL_ID")
@@ -23,7 +23,7 @@ BLUE = 0x3B82F6
 RED = 0xEF4444
 WARNS_FILE = "warns.json"
 
-# ─── Warns storage (JSON) ─────────────────────────────────────────────────────
+# Warns storage
 def load_warns() -> dict:
     if not os.path.exists(WARNS_FILE):
         return {}
@@ -54,7 +54,7 @@ def get_warns(user_id: int) -> list:
     data = load_warns()
     return data.get(str(user_id), [])
 
-# ─── Banned words ─────────────────────────────────────────────────────────────
+# Banned words
 BANNED_WORDS = [
     "faggot",
     "nigger",
@@ -71,7 +71,7 @@ BANNED_WORDS = [
     "hate ngas"
 ]
 
-# ─── Keywords → responses ─────────────────────────────────────────────────────
+# Responses
 # emoji_name: server emoji to prepend to the title (resolved at runtime)
 KEYWORDS = {
     "vbucks": {
@@ -129,7 +129,7 @@ KEYWORDS = {
     },
 }
 
-# ─── Bot setup ────────────────────────────────────────────────────────────────
+# Bot setup
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -137,13 +137,13 @@ intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 tree = bot.tree
 
-# ─── Rotating statuses ───────────────────────────────────────────────────────
+# Rotating status on discord
 STATUSES = itertools.cycle([
     "Flow is listening...",
     "Flow is moderating...",
 ])
 
-# ─── Emoji helper ─────────────────────────────────────────────────────────────
+# Emojis
 def get_emoji(name: str) -> str:
     """Return the formatted server emoji string, or empty string if not found."""
     guild = bot.get_guild(GUILD_ID)
@@ -152,7 +152,7 @@ def get_emoji(name: str) -> str:
     e = discord.utils.get(guild.emojis, name=name)
     return str(e) if e else ""
 
-# ─── Helpers ──────────────────────────────────────────────────────────────────
+# Helpers 
 def blue_embed(title: str, description: str) -> discord.Embed:
     flow = get_emoji("Flow")
     embed = discord.Embed(title=title, description=description, color=BLUE)
@@ -188,8 +188,8 @@ async def log_warn(guild: discord.Guild, target: discord.Member,
     embed.set_footer(text=f"{flow} Flow • Moderation".strip())
     await log_channel.send(embed=embed)
 
-# ─── Rotating status task ────────────────────────────────────────────────────
-@tasks.loop(seconds=10)
+# Rotating status
+@tasks.loop(seconds=10) # Changes every 10 seconds, if you want to change it. Change the number in seconds.
 async def rotate_status():
     await bot.change_presence(
         activity=discord.Activity(
@@ -198,7 +198,7 @@ async def rotate_status():
         )
     )
 
-# ─── Event: bot ready ────────────────────────────────────────────────────────
+# Bot ready event
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
@@ -207,7 +207,7 @@ async def on_ready():
     rotate_status.start()
     print("✅ Slash commands synced. Flow is listening...")
 
-# ─── /warn ────────────────────────────────────────────────────────────────────
+# /warn
 @tree.command(
     name="warn",
     description="Warn a user. Accepts @mention or user ID.",
@@ -256,7 +256,7 @@ async def warn(interaction: discord.Interaction, user: str, reason: str):
 
     await log_warn(interaction.guild, target, interaction.user, reason, case)
 
-# ─── /modlogs ─────────────────────────────────────────────────────────────────
+# /modlogs
 @tree.command(
     name="modlogs",
     description="View mod logs for a user. Accepts @mention or user ID.",
@@ -301,7 +301,7 @@ async def modlogs(interaction: discord.Interaction, user: str):
     embed.timestamp = datetime.datetime.utcnow()
     await interaction.response.send_message(embed=embed)
 
-# ─── Error handler ────────────────────────────────────────────────────────────
+# Errors
 @warn.error
 @modlogs.error
 async def mod_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
@@ -311,7 +311,7 @@ async def mod_error(interaction: discord.Interaction, error: app_commands.AppCom
             ephemeral=True,
         )
 
-# ─── Event: message listener ──────────────────────────────────────────────────
+# Message listener
 @bot.event
 async def on_message(message: discord.Message):
     if message.author.bot:
@@ -319,7 +319,7 @@ async def on_message(message: discord.Message):
 
     content_lower = message.content.lower()
 
-    # ── Auto-moderation ────────────────────────────────────────────────────
+    # Auto mod
     author_role_ids = {role.id for role in message.author.roles}
     is_excluded = bool(author_role_ids & set(EXCLUDED_ROLE_IDS))
 
@@ -355,7 +355,7 @@ async def on_message(message: discord.Message):
 
                 return
 
-    # ── Keywords → one response per message ───────────────────────────────
+    # Key words
     for keyword, data in KEYWORDS.items():
         if keyword in content_lower:
             emoji = get_emoji(data["emoji_name"])
@@ -366,5 +366,4 @@ async def on_message(message: discord.Message):
 
     await bot.process_commands(message)
 
-# ─── Run ──────────────────────────────────────────────────────────────────────
 bot.run(TOKEN)
