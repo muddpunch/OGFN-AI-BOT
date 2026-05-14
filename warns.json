@@ -1,0 +1,36 @@
+{
+  "443101466329088010": [
+    {
+      "case": 1,
+      "moderator_id": 443101466329088010,
+      "moderator_name": "punchmade.v",
+      "reason": "test",
+      "timestamp": "2026-05-02T10:41:38.432809"
+    }
+  ],
+  "1086108325025959946": [
+    {
+      "case": 2,
+      "moderator_id": 443101466329088010,
+      "moderator_name": "punchmade.v",
+      "reason": "test",
+      "timestamp": "2026-05-02T10:42:20.152112"
+    }
+  ],
+  "919578033130733608": [
+    {
+      "case": 3,
+      "moderator_id": 1500079697755766865,
+      "moderator_name": "Flow AI#5476",
+      "reason": "Using banned words (automod)",
+      "timestamp": "2026-05-02T12:07:17.166545"
+    },
+    {
+      "case": 4,
+      "moderator_id": 1500079697755766865,
+      "moderator_name": "Flow AI#5476",
+      "reason": "Using banned words (automod)",
+      "timestamp": "2026-05-02T13:26:57.875024"
+    }
+  ]
+}
