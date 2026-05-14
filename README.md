@@ -65,22 +65,3 @@ python bot.py
 /warn user:<mention|id> reason:<text>
 /modlogs user:<mention|id>
 ```
-
-## Security
-
-```txt
-.env is ignored by Git and must never be committed.
-Rotate the Discord bot token immediately if it was ever pushed publicly.
-Do not share production server IDs, channel IDs, or moderation data unless required.
-```
-
-## Project Structure
-
-```txt
-flowAI/
-|-- bot.py
-|-- requirements.txt
-|-- warns.json
-|-- .gitignore
-`-- README.md
-```
