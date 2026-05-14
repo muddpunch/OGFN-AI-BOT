@@ -26,3 +26,6 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+
+# Runtime data
+warns.json
